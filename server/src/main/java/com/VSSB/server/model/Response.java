@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response {
+public class Response { // response to user
     protected LocalDateTime timeStamp;
     protected int statusCode;
     protected HttpStatus status;
