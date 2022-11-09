@@ -4,6 +4,8 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +13,9 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,5 +83,42 @@ public class ServerResource {
                         .statusCode(CREATED.value())
                         .build()
         );
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Response> getServer(@PathVariable("id") Long id) {
+        Map<String,Server> data = new HashMap<>();
+        data.put("server", serverService.get(id));
+        return ResponseEntity.ok(
+                Response.builder()
+                        .timeStamp(LocalDateTime.now())
+                        .data(data)
+                        //.data(Map.of("servers", serverService.list(30)))
+                        .message("Server retrieved")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Response> deleteServer(@PathVariable("id") Long id) {
+        Map<String,Boolean> data = new HashMap<>();
+        data.put("deleted", serverService.delete(id));
+        return ResponseEntity.ok(
+                Response.builder()
+                        .timeStamp(LocalDateTime.now())
+                        .data(data)
+                        //.data(Map.of("servers", serverService.list(30)))
+                        .message("Server deleted")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build()
+        );
+    }
+
+    @GetMapping(path = "/image/{fileName}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getServerImage(@PathVariable("fileName") String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get("./Media/" + fileName)); //Paths.get(System.getProperty("user.home") + "Downloads/images/" + fileName)
     }
 }
